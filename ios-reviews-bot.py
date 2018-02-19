@@ -65,20 +65,20 @@ for i in NewIds:
  NewData.append([item for item in data['feed']['entry']
         if item['id']['label'] == i])
 
-
 # Build the payload for each Id
-for i in NewData:
+for idx, i in enumerate(NewData):
     review = i[0]['content']['label']
     author = i[0]['author']['name']['label']
     rating = i[0]['im:rating']['label']
     label = i[0]['title']['label']
+    version = i[0]['im:version']['label']
 
     # Convert rating to emoji stars
     stars = ''
     for i in range(0,int(rating)):
         stars = stars + ':star:'
 
-    SlackMessage = '_' + author + '_' + ' says:\n\n*' + label + '*\n' + review + '\n\n' + stars + '\n'
+    SlackMessage = '_' + author + '_' + ' says:\n\n*' + label + '*\n' + review + '\n\n' + stars + '\nVersion ' + version
     SlackPayload = '{"channel": "' + SlackChannel + '", "text": ">>>' + SlackMessage + '", "username": "' + SlackUsername + '", "icon_emoji": "' + SlackEmoji + '"}'
 
     # Post payload to Slack Webhook
@@ -87,11 +87,11 @@ for i in NewData:
         headers={'Content-Type': 'application/json'}
     )
 
-    if response.status_code != 200:
-        raise ValueError(
-            'Request to slack returned an error %s, the response is:\n%s'
-            % (response.status_code, response.text)
-        )
+    try:
+        if response.status_code != 200:
+            response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+        print('ReviewID: ', NewIds[idx]  , e)
 
 # Append the new Ids to the IdFile
 with open(IdFile, "a") as f:
