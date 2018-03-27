@@ -24,52 +24,52 @@ def getSlackWebhook(paramName):
   return response['Parameter']['Value']
 
 def slackSend(NewData, NewIds):
- # Grab Slack Webhook
- SlackWebhook = getSlackWebhook(SSMParameter)
+  # Grab Slack Webhook
+  SlackWebhook = getSlackWebhook(SSMParameter)
 
- # Build the payload for each Id
- for idx, i in enumerate(NewData):
-   review = i[0]['content']['label']
-   author = i[0]['author']['name']['label']
-   rating = i[0]['im:rating']['label']
-   label = i[0]['title']['label']
-   version = i[0]['im:version']['label']
+  # Build the payload for each Id
+  for idx, i in enumerate(NewData):
+    review = i[0]['content']['label']
+    author = i[0]['author']['name']['label']
+    rating = i[0]['im:rating']['label']
+    label = i[0]['title']['label']
+    version = i[0]['im:version']['label']
 
-   # Convert rating to emoji stars
-   stars = ''
-   for i in range(0,int(rating)):
-       stars = stars + ':star:'
+    # Convert rating to emoji stars
+    stars = ''
+    for i in range(0,int(rating)):
+      stars = stars + ':star:'
 
-   # Set bar colour based on rating
-   barcolor = 'good'
-   if int(rating) < 3:
-     barcolor = 'danger'
-   elif int(rating) == 3:
-     barcolor = 'warning'
+    # Set bar colour based on rating
+    barcolor = 'good'
+    if int(rating) < 3:
+      barcolor = 'danger'
+    elif int(rating) == 3:
+      barcolor = 'warning'
 
-   payload = {
-   'channel': SlackChannel,
-   'username': SlackUsername,
-   'icon_emoji': SlackEmoji,
-   'attachments': [{
-     'author_name': author,
-     'color': barcolor,
-     'title': label,
-     'text': review + '\n\n' + stars + '\nVersion ' + version
-     }]
-   }
+    payload = {
+    'channel': SlackChannel,
+    'username': SlackUsername,
+    'icon_emoji': SlackEmoji,
+    'attachments': [{
+      'author_name': author,
+      'color': barcolor,
+      'title': label,
+      'text': review + '\n\n' + stars + '\nVersion ' + version
+      }]
+    }
 
-   # Post payload to Slack Webhook
-   response = requests.post(
-       SlackWebhook, data=json.dumps(payload),
-       headers={'Content-Type': 'application/json'}
-   )
+    # Post payload to Slack Webhook
+    response = requests.post(
+        SlackWebhook, data=json.dumps(payload),
+        headers={'Content-Type': 'application/json'}
+    )
 
-   try:
-       if response.status_code != 200:
-           response.raise_for_status()
-   except requests.exceptions.HTTPError as e:
-       print('ReviewID: ', NewIds[idx]  , e)
+    try:
+      if response.status_code != 200:
+        response.raise_for_status()
+    except requests.exceptions.HTTPError as e:
+      print('ReviewID: ', NewIds[idx]  , e)
 
 def main():
   # File to store all the Ids to date (absolute path)
