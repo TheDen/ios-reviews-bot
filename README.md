@@ -9,6 +9,7 @@ A slackbot that pulls the latest iOS/iTunes review for your application and post
 * `boto3`
 * `requests`
 * `redis`
+* [python-lambda-local](https://github.com/HDE/python-lambda-local)
 
 ## Running
 
