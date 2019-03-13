@@ -6,7 +6,10 @@ A slackbot that pulls the latest iOS/iTunes review for your application and post
 
 * `python3`
 * A valid slack webhook, i.e, of the form `https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX`
-* `boto3` + `requests` (from `requirements.txt`)
+* `boto3`
+* `requests`
+* `redis`
+* [python-lambda-local](https://github.com/HDE/python-lambda-local)
 
 ## Running
 
